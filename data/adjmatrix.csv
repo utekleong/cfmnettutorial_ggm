@@ -1,0 +1,11 @@
+"","newspapers","tv","radio","websites","socmed","doctor","healthprof","gov","famfriend","vacdistrust"
+"newspapers",0,1,1,0,1,1,1,1,1,1
+"tv",1,0,1,1,0,1,1,1,1,1
+"radio",1,1,0,1,0,1,1,1,1,0
+"websites",0,1,1,0,1,1,0,1,1,1
+"socmed",1,0,0,1,0,1,1,1,1,1
+"doctor",1,1,1,1,1,0,1,0,1,1
+"healthprof",1,1,1,0,1,1,0,1,1,0
+"gov",1,1,1,1,1,0,1,0,1,1
+"famfriend",1,1,1,1,1,1,1,1,0,1
+"vacdistrust",1,1,0,1,1,1,0,1,1,0
