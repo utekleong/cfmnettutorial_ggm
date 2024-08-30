@@ -61,8 +61,7 @@ plot_old <- plot(network_old,
      nodeNames = nodelabels$variable_description_short,
      legend.cex = 1,
      curve = 0.5,
-     curveAll = TRUE,
-     filename = "expnetwork", filetype = "png", width = 20, height = 20)
+     curveAll = TRUE)
 
 # extracting adjacency matrix from the exploratory network to be used in confirmatory network analysis:
 adjmatrix <- 1*(network_old$graph !=0)

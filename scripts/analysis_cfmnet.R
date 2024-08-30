@@ -60,5 +60,4 @@ plot_young <- qgraph(getmatrix(results_cfmnetwork, "omega", threshold = TRUE, al
                   legend.cex = 1,
                   curve = 0.8,
                   curveAll = TRUE,
-                  filename = "cfmnetwork", filetype = "jpeg", width = 20, height = 20,
                   theme = "colorblind")
