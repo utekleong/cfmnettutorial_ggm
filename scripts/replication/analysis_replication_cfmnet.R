@@ -20,21 +20,15 @@ networkdata_young <- networkdata %>%
 # pulling adjacency matrix from exploratory network:
 adjmatrix <- as.matrix(read.csv("./data/adjmatrix.csv", row.names = 1))
 
-# obtaining average pairwise sample size for young adult subsample
-noNA <- !is.na(networkdata_young)
-noNAmat <- t(noNA) %*% noNA
-n_pairwise <- mean(noNAmat[lower.tri(noNAmat)])
+# fitting confirmatory network model:
+confirmatoryNetwork <- psychonetrics::ggm(networkdata_young, omega = adjmatrix)
 
-# fitting confirmatory network model with psychonetrics
-# since exploratory model used spearman, should use spearman in confirmatory model for consistency (supply covs and nobs arguments instead of data)
-cfmnetwork <- ggm(covs = cor(networkdata_young, use = "pairwise.complete.obs", method = "spearman"),
-                  nobs = n_pairwise,
-                  omega = adjmatrix)
-results_cfmnetwork <- cfmnetwork %>% runmodel()
+# running the model:
+confirmatoryNetwork <- confirmatoryNetwork %>% 
+  runmodel()
 
-# obtaining model fit indices
-results_cfmnetwork %>% fit %>% 
-  filter(Measure == "df" |Measure == "chisq" | Measure == "rmsea" | Measure == "tli" | Measure == "cfi")
+# obtaining model fit:
+confirmatoryNetwork %>% fit
 
 #specifying node grouping:
 grouping <- list("Information Sources" = c(1:9),
@@ -46,18 +40,14 @@ nodelabels <- data.frame(labels = c("newspapers", "tv", "radio", "websites", "so
                          variable_description_short = c("Newspapers", "Television", "Radio", "Internet websites", "Social media", "Doctor", "Other health professionals",
                                                         "Government agencies", "Family or friends", "Distrust in vaccines"))
 
+#loading plot layout of exploratory model
 plotlayout <- as.matrix(read.csv("./data/plotlayout.csv"))
 
 #plotting confirmatory network
-plot_young <- qgraph(getmatrix(results_cfmnetwork, "omega", threshold = TRUE, alpha = 0.05),
+plot_young <- qgraph(getmatrix(confirmatoryNetwork, "omega", threshold = TRUE, alpha = 0.05),
                   groups = grouping,
                   layout = plotlayout,
-                  cut = 0,
-                  palette = "pastel",
-                  vsize = 8,
                   labels = nodelabels$label,
-                  nodeNames = nodelabels$variable_description_short,
-                  legend.cex = 1,
-                  curve = 0.8,
-                  curveAll = TRUE,
-                  theme = "colorblind")
+                  legend = FALSE,
+                  theme = "colorblind",
+                  filename = "cfmnetwork_replication", filetype = "png", width = 20, height = 20)

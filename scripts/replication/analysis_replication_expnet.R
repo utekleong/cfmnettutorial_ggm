@@ -3,7 +3,7 @@
 #################################################################
 #loading packages:
 library(tidyverse)
-library(bootnet)
+library(psychonetrics)
 library(psych)
 
 #loading data:
@@ -33,12 +33,12 @@ networkdata_old <- networkdata %>%
   select(-age)
 
 #estimating network:
-network_old <- estimateNetwork(networkdata_old,
-                              default = "EBICglasso",
-                              corMethod = "spearman",
-                              missing = "pairwise",
-                              sampleSize = "pairwise_average",
-                              tuning = 0.5)
+exploratoryModel <- psychonetrics::ggm(networkdata_old,
+                              estimator = "FIML")
+
+#running the model:
+exploratoryModel <- exploratoryModel %>% 
+  runmodel()
 
 #specifying node grouping:
 grouping <- list("Information Sources" = c(1:9),
@@ -51,22 +51,18 @@ nodelabels <- data.frame(labels = c("newspapers", "tv", "radio", "websites", "so
                                                         "Government agencies", "Family or friends", "Distrust in vaccines"))
 
 #plotting network:
-plot_old <- plot(network_old,
-     groups = grouping,
-     layout = "spring",
-     cut = 0,
-     palette = "pastel",
-     vsize = 8,
-     labels = nodelabels$labels,
-     nodeNames = nodelabels$variable_description_short,
-     legend.cex = 1,
-     curve = 0.5,
-     curveAll = TRUE)
+plot <- qgraph((getmatrix(exploratoryModel, matrix = "omega", threshold = TRUE, alpha = 0.05)),
+       labels = nodelabels$labels,
+       groups = grouping,
+       layout = "spring",
+       legend = FALSE,
+       theme = "colorblind",
+       filename = "expnetwork", filetype = "png", width = 20, height = 20)
 
 # extracting adjacency matrix from the exploratory network to be used in confirmatory network analysis:
-adjmatrix <- 1*(network_old$graph !=0)
+adjmatrix <- 1*((getmatrix(exploratoryModel, matrix = "omega", threshold = TRUE, alpha = .05) !=0))
 # write.csv(adjmatrix, file = "./data/adjmatrix.csv", row.names = TRUE)
 
 # extracting plot layout from the exploratory network to be used in confirmatory network analysis:
-plotlayout <- plot_old$layout
+plotlayout <- plot$layout
 # write.csv(plotlayout, file = "./data/plotlayout.csv", row.names = FALSE)
