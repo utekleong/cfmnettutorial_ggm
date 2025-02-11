@@ -7,12 +7,19 @@ library(psychonetrics)
 library(qgraph)
 
 #loading cleaned Wave 2 data:
-networkdata <- read.csv("./data/data_clean_W2.csv")
+networkdata <- read.csv("./data/data_clean_W1.csv")
 
-#subsetting data to young adulthood:
-networkdata_young <- networkdata %>% 
-  filter(age <= 34) %>% 
-  select(-age)
+#subsetting data to females
+
+#1 = Male
+#2 = Female
+#3 = Transgender
+#4 = Prefer not to say
+#5 = Other
+
+networkdata_female <- networkdata %>% 
+  filter(gender == 2) %>% 
+  select(-gender)
 
 #################################################################
 ##              Estimating "confirmatory" network              ##
@@ -21,7 +28,7 @@ networkdata_young <- networkdata %>%
 adjmatrix <- as.matrix(read.csv("./data/adjmatrix.csv", row.names = 1))
 
 # fitting confirmatory network model:
-confirmatoryNetwork <- psychonetrics::ggm(networkdata_young, omega = adjmatrix)
+confirmatoryNetwork <- psychonetrics::ggm(networkdata_female, omega = adjmatrix)
 
 # running the model:
 confirmatoryNetwork <- confirmatoryNetwork %>% 
@@ -30,24 +37,17 @@ confirmatoryNetwork <- confirmatoryNetwork %>%
 # obtaining model fit:
 confirmatoryNetwork %>% fit
 
-#specifying node grouping:
-grouping <- list("Information Sources" = c(1:9),
-                 "Feelings about Vaccination" = 10)
+#creating data frame of labels:
+nodelabels <- data.frame(labels = c("Anxious", "WorryControl", "Worry", "Relax", "Restless", "Annoyed", "Fear"))
 
-#creating data frame of labels and short description for legend
-nodelabels <- data.frame(labels = c("newspapers", "tv", "radio", "websites", "socmed", "doctor", "healthprof",
-                                    "gov", "famfriend", "vacdistrust"),
-                         variable_description_short = c("Newspapers", "Television", "Radio", "Internet websites", "Social media", "Doctor", "Other health professionals",
-                                                        "Government agencies", "Family or friends", "Distrust in vaccines"))
-
-#loading plot layout of exploratory model
+#loading plot layout of exploratory model:
 plotlayout <- as.matrix(read.csv("./data/plotlayout.csv"))
 
-#plotting confirmatory network
-plot_young <- qgraph(getmatrix(confirmatoryNetwork, "omega", threshold = TRUE, alpha = 0.05),
-                  groups = grouping,
+#plotting confirmatory network:
+plot<- qgraph(getmatrix(confirmatoryNetwork, "omega", threshold = TRUE, alpha = 0.05),
                   layout = plotlayout,
                   labels = nodelabels$label,
                   legend = FALSE,
                   theme = "colorblind",
-                  filename = "cfmnetwork_replication", filetype = "png", width = 20, height = 20)
+                  color = "pink",
+                  filename = "gender_cfmnetwork", filetype = "png", width = 20, height = 20)

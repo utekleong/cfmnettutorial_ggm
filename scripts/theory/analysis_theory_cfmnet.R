@@ -15,19 +15,21 @@ data <- read.csv("./data/data_full.csv") %>%
 #################################################################
 #creating adjacency matrix:
 conf_structure_po <- matrix(0, nrow = 7, ncol =7)
-nodelabels <- data.frame(labels = c("cons1", "cons2", "cons3", "cons4", "cons5", "loc_chance", "loc_po"),
+nodelabels <- data.frame(labels = c("CT1_PublicNotInformed", "CT2_PoliticiansMotives", "CT3_GovMonitoring", "CT4_SecretActivities", "CT5_SecretOrgs",
+                                    "LOC_Chance", "LOC_PowfOthers"),
                          grouping = c("CT", "CT", "CT", "CT", "CT", "LOC", "LOC"))
 rownames(conf_structure_po) <- nodelabels$labels
 colnames(conf_structure_po) <- nodelabels$labels
 
-conf_structure_po[1:5,7] <- 1 #powerful others subscale associated with the five items of the Conspiracy Mentality Scale
-conf_structure_po[7,1:5] <- 1 #to ensure symmetry
+conf_structure_po[1:5,7] <- 1 #Powerful others subscale is associated with the five items of the Conspiracy Mentality Scale. Adds these associations to the upper triangle of the matrix. 
+conf_structure_po[7,1:5] <- 1 #Adds these associations to the lower triangle of the matrix, to ensure symmetry.
 
-conf_structure_po[6,7] <- 1 #powerful others subscale associated with chance subscale of the Locus of Control scale
-conf_structure_po[7,6] <- 1 #to ensure symmetry
-conf_structure_po[1:5,1:5] <- 1 #five items of the Consipiracy Mentality Scale are form the same measure, so they should be associated with one another
+conf_structure_po[6,7] <- 1 #Powerful others subscale is associated with the Chance subscale of the Locus of Control scale. Adds this association to the upper triangle of the matrix. 
+conf_structure_po[7,6] <- 1 #Adds this association to the lower triangle of the matrix, to ensure symmetry.
+conf_structure_po[1:5,1:5] <- 1 #The five items of the Conspiracy Mentality Questionnaire are each associated with each other. Each item should also associate with itself.
 
-diag(conf_structure_po) <- 1 #ensuring diagonals are "1"s
+conf_structure_po[6,6] <- 1 #Chance subscale of the Locus of Control scale is associated with itself.
+conf_structure_po[7,7] <- 1 #Powerful others subscale of the Locus of Control scale is associated with itself.
 
 ##################################################################
 ##                  Fitting confirmatory model                  ##
@@ -52,4 +54,5 @@ qgraph((getmatrix(confirmatoryModel, matrix = "omega", threshold = TRUE, alpha =
        layout = "spring",
        legend = FALSE,
        theme = "colorblind",
+       palette = "pastel",
        filename = "cfmnetwork_theory", filetype = "png", width = 20, height = 20)
