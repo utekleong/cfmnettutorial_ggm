@@ -55,4 +55,4 @@ qgraph((getmatrix(confirmatoryModel, matrix = "omega", threshold = TRUE, alpha =
        legend = FALSE,
        theme = "colorblind",
        palette = "pastel",
-       filename = "cfmnetwork_theory", filetype = "png", width = 20, height = 20)
+       filename = "conspiracy_cfmnetwork", filetype = "png", width = 20, height = 20)
