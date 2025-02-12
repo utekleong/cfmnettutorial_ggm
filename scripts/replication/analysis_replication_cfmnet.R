@@ -6,10 +6,10 @@ library(tidyverse)
 library(psychonetrics)
 library(qgraph)
 
-#loading cleaned Wave 2 data:
+#loading cleaned Wave 1 data:
 networkdata <- read.csv("./data/data_clean_W1.csv")
 
-#subsetting data to females
+#subsetting data to females:
 
 #1 = Male
 #2 = Female
@@ -50,4 +50,5 @@ plot<- qgraph(getmatrix(confirmatoryNetwork, "omega", threshold = TRUE, alpha = 
                   legend = FALSE,
                   theme = "colorblind",
                   color = "pink",
+                  edge.labels = TRUE,
                   filename = "gender_cfmnetwork", filetype = "png", width = 20, height = 20)

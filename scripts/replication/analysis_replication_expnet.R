@@ -10,7 +10,7 @@ library(psych)
 #loading data:
 data_full <- read.csv("./data/data_full.csv")
 
-#subsetting data to Wave 2:
+#subsetting data to Wave 1:
 data_W1 <- data_full %>% 
   filter(W1_Present == "1") %>% 
   select(pid, starts_with("W1"))
@@ -26,13 +26,13 @@ names(networkdata) <- c("gender", "GAD1_Anxious", "GAD2_WorryControl", "GAD3_Wor
 ##################################################################
 ##               Estimating "exploratory" network               ##
 ##################################################################
+#subsetting data to males:
 #1 = Male
 #2 = Female
 #3 = Transgender
 #4 = Prefer not to say
 #5 = Other
 
-#subsetting data to males:
 networkdata_male <- networkdata %>% 
   filter(gender == 1) %>% 
   select(-gender)
@@ -55,10 +55,12 @@ plot <- qgraph((getmatrix(exploratoryModel, matrix = "omega", threshold = TRUE, 
        legend = FALSE,
        theme = "colorblind",
        color = "pink",
+       edge.labels = TRUE,
        filename = "gender_expnetwork", filetype = "png", width = 20, height = 20)
 
 # extracting adjacency matrix from the exploratory network to be used in confirmatory network analysis:
-adjmatrix <- 1*((getmatrix(exploratoryModel, matrix = "omega", threshold = TRUE, alpha = .05) !=0))
+omega <- getmatrix(exploratoryModel, matrix = "omega", threshold = TRUE, alpha = .05) # Extracts the omega matrix from the exploratory network, which encodes the strength of associations between nodes in the network
+adjmatrix <- 1*(omega !=0) # This line of code transforms the omega matrix into the adjacency matrix by replacing all non-zero values in the omega matrix with 1s
 # write.csv(adjmatrix, file = "./data/adjmatrix.csv", row.names = TRUE)
 
 # extracting plot layout from the exploratory network to be used in confirmatory network analysis:
